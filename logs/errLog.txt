@@ -1,1 +1,4 @@
 20230406	20:07:12	485bfc4c-4852-4926-b655-6061c49a8437	TypeError	fsPromises.readFil is not a function
+20230410	22:32:24	f3d96a04-208d-4530-8810-3f6415175f1a	Error: Not allowed by CORS
+20230410	22:51:47	ad1360ac-5963-4021-9d22-493897c977c7	Error: ENOENT: no such file or directory, stat '/home/km/repo/node/views/subdir/test.html'
+20230410	23:21:00	b039a2c0-a0ca-4d08-8e8e-4416b0dd1c35	ReferenceError: json is not defined
