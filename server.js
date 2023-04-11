@@ -2,50 +2,41 @@ const express = require('express');
 const app = express();
 const path = require("path");
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 
 const { logger } = require('./middleware/logEvents');
 const errorHandler = require('./middleware/errorHandler'); 
+const corsOptions = require('./config/corsOptions');
+const verifyJWT = require('./middleware/verifyJWT');
+const credentials = require('./middleware/credentials');
+
 
 const PORT = process.env.PORT || 3500;
 
 //custom middleware logger
 
 app.use(logger)
+app.use(credentials);
 
-//Cross Origin Resource Sharing
-const whitelist = ['http://localhost:3500'];
-const corsOptions = {
-    origin: (origin, callback) => {
-        if (whitelist.indexOf(origin) !== -1 || !origin) {
-            callback(null, true)
-        } else {
-            callback(new Error('Not allowed by CORS'))
-        }
-    },
-    optionsSuccessStatus: 200
-}
 app.use(cors(corsOptions));
 
 app.use(express.urlencoded({ extended: false }));
 
 app.use(express.json());
 
+//middleware for cookies
+app.use(cookieParser());
+
 app.use(express.static(path.join(__dirname, 'public')));
-app.use('/subdir', express.static(path.join(__dirname, 'public')));
 
 app.use('/', require('./routes/root'));
-app.use('/subdir', require('./routes/subdir'));
+app.use('/register', require('./routes/register'));
+app.use('/auth', require('./routes/auth'));
+app.use('/refresh', require('./routes/refresh'));
+app.use('/logout', require('./routes/logout'));
+
+app.use(verifyJWT);
 app.use('/employees', require('./routes/api/employees'));
-
-
-//route handler
-
-app.get('/hello(.html)?', (req, res, next) => {
-    console.log('attempted to load hello.html');
-    next()
-}, (req, res) => {
-    res.send('hello world')
-})
 
 
 app.all('*', (req, res) => {
